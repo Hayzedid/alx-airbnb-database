@@ -1,5 +1,52 @@
 -- Task 6: Implement Partitioning
 
+-- Method 1: Create new partitioned tables from scratch
+
+-- Create partitioned Booking table
+CREATE TABLE Booking_partitioned (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    property_id INTEGER NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+PARTITION BY RANGE (YEAR(start_date) * 100 + MONTH(start_date)) (
+    PARTITION p202301 VALUES LESS THAN (202302),
+    PARTITION p202302 VALUES LESS THAN (202303),
+    PARTITION p202303 VALUES LESS THAN (202304),
+    PARTITION p202304 VALUES LESS THAN (202305),
+    PARTITION p202305 VALUES LESS THAN (202306),
+    PARTITION p202306 VALUES LESS THAN (202307),
+    PARTITION p202307 VALUES LESS THAN (202308),
+    PARTITION p202308 VALUES LESS THAN (202309),
+    PARTITION p202309 VALUES LESS THAN (202310),
+    PARTITION p202310 VALUES LESS THAN (202311),
+    PARTITION p202311 VALUES LESS THAN (202312),
+    PARTITION p202312 VALUES LESS THAN (202401),
+    PARTITION p_future VALUES LESS THAN MAXVALUE
+);
+
+-- Create partitioned Payment table
+CREATE TABLE Payment_partitioned (
+    id SERIAL PRIMARY KEY,
+    booking_id INTEGER NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_method VARCHAR(50),
+    status VARCHAR(50) DEFAULT 'completed'
+)
+PARTITION BY RANGE (YEAR(payment_date)) (
+    PARTITION p2023 VALUES LESS THAN (2024),
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION p_future VALUES LESS THAN MAXVALUE
+);
+
+-- Method 2: Alter existing tables to add partitioning
+
 -- Partition the Booking table by start_date (monthly partitions for better granularity)
 -- Drop existing partitioning if it exists
 ALTER TABLE Booking REMOVE PARTITIONING;
