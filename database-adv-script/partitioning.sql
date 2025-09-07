@@ -54,7 +54,7 @@ ORDER BY TABLE_NAME, PARTITION_NAME;
 
 -- Test partition pruning with a date range query
 EXPLAIN SELECT * FROM Booking
-WHERE start_date BETWEEN '2024-01-01' AND '2024-03-31';
+WHERE start_date BETWEEN '2024-01-01' AND '2024-01-31';
 
 -- Show which partitions are being used
 SELECT PARTITION_NAME, TABLE_ROWS
